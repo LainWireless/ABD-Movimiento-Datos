@@ -153,7 +153,7 @@ crontab -e
 
 ![MovimientoDatos](capturas/script3.png)
 
-Parece ser que cron no es capaz de ejecutar el script. No he encontrado la solución a este problema. Parece ser que la única forma de programar esta tarea es usando de PL/SQL. para ello, crearemos un paquete PL/SQL que realice la exportación.
+Parece ser que cron no es capaz de ejecutar el script. No he encontrado la solución a este problema. Parece ser que la única forma de programar esta tarea es usando de PL/SQL.
 
 
 ## 2. Importa el fichero obtenido anteriormente usando Oracle Data Pump pero en un usuario distinto de la misma base de datos.
