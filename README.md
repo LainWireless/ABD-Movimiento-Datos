@@ -99,7 +99,6 @@ Contenido del fichero de exportación:
 
 ![MovimientoDatos](capturas/10.png)
 
-
 Para programar la operación de exportación para dentro de 2 minutos, primero crearé un script que realice la exportación:
 ```bash
 nano export.sh
@@ -116,7 +115,7 @@ QUERY=DEPT:'"WHERE DEPTNO IN (SELECT DEPTNO FROM EMP GROUP BY DEPTNO HAVING COUN
 RUTA_EXPORTACION=/home/oracle/datos
 DIRECTORY=datos
 NOMBRE_EXPORTACION=exportacion_$FECHA
-NOMBRE_EXPORTACION=estimacion_$FECHA
+NOMBRE_ESTIMACION=estimacion_$FECHA
 
 # Realizamos la estimación y la exportación
 
@@ -129,17 +128,32 @@ expdp $USUARIO/$PASSWORD directory=$DIRECTORY dumpfile=$NOMBRE_EXPORTACION.dmp l
 
 Deberemos dar permisos de ejecución al script:
 ```bash
-chmod +x /home/oracle/export.sh
+chmod a+x /home/oracle/export.sh
 ```
+
+Ejecutamos el script para comprobar que funciona correctamente:
+```bash
+. export.sh
+```
+
+![MovimientoDatos](capturas/script1.png)
+
+-
+
+![MovimientoDatos](capturas/script2.png)
 
 Ahora programaremos la ejecución del script de exportación en el crontab para que se ejecute dentro de 2 minutos:
 ```bash
+export EDITOR=nano
 crontab -e
 ```
 ```javascript
-# m h  dom mon dow   command
 */2 * * * * /home/oracle/export.sh
 ```
+
+![MovimientoDatos](capturas/script3.png)
+
+Parece ser que cron no es capaz de ejecutar el script. No he encontrado la solución a este problema. Parece ser que la única forma de programar esta tarea es usando de PL/SQL. para ello, crearemos un paquete PL/SQL que realice la exportación.
 
 
 ## 2. Importa el fichero obtenido anteriormente usando Oracle Data Pump pero en un usuario distinto de la misma base de datos.
