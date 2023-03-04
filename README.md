@@ -99,6 +99,49 @@ Contenido del fichero de exportación:
 
 ![MovimientoDatos](capturas/10.png)
 
+
+Para programar la operación de exportación para dentro de 2 minutos, primero crearé un script que realice la exportación:
+```bash
+nano export.sh
+
+#!/bin/bash
+
+# Definimos variables
+FECHA=`date +%Y%m%d%H%M%S`
+USUARIO=SCOTT
+PASSWORD=TIGER
+SCHEMA=SCOTT
+EXCLUDE=TABLE:"IN('BONUS')"
+QUERY=DEPT:'"WHERE DEPTNO IN (SELECT DEPTNO FROM EMP GROUP BY DEPTNO HAVING COUNT(*) >= 2)"'
+RUTA_EXPORTACION=/home/oracle/datos
+DIRECTORY=datos
+NOMBRE_EXPORTACION=exportacion_$FECHA
+NOMBRE_EXPORTACION=estimacion_$FECHA
+
+# Realizamos la estimación y la exportación
+
+expdp $USUARIO/$PASSWORD DIRECTORY=$DIRECTORY CONTENT=ALL LOGFILE=$NOMBRE_ESTIMACION.log SCHEMAS=$SCHEMA ESTIMATE_ONLY=y
+
+sleep 10
+
+expdp $USUARIO/$PASSWORD directory=$DIRECTORY dumpfile=$NOMBRE_EXPORTACION.dmp logfile=$NOMBRE_EXPORTACION.log SCHEMAS=$SCHEMA EXCLUDE=$EXCLUDE QUERY=$QUERY JOB_NAME=$NOMBRE_EXPORTACION
+```
+
+Deberemos dar permisos de ejecución al script:
+```bash
+chmod +x /home/oracle/export.sh
+```
+
+Ahora programaremos la ejecución del script de exportación en el crontab para que se ejecute dentro de 2 minutos:
+```bash
+crontab -e
+```
+```javascript
+# m h  dom mon dow   command
+*/2 * * * * /home/oracle/export.sh
+```
+
+
 ## 2. Importa el fichero obtenido anteriormente usando Oracle Data Pump pero en un usuario distinto de la misma base de datos.
 
 Crearé el usuario destino en la base de datos con sus permisos correspondientes:
